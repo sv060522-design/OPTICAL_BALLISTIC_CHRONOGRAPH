@@ -1,0 +1,48 @@
+float data = 0;
+
+volatile unsigned long int time1 = 0;
+volatile unsigned long int time2 = 0;
+
+void setup()
+{
+    Serial.begin(9600);
+
+    attachInterrupt(0, start, RISING);
+    attachInterrupt(1, finish, RISING);
+}
+
+void loop()
+{
+    while (time1 == 0 && time2 == 0);
+    delay(800);
+
+    if (time1 != 0 && time2 != 0 && time2 > time1)
+    {
+        data = 0.1 * 1000000 / ((time2 - time1)); // v = s / t, где s = 0.1 м
+    }
+    else
+    {
+        data = 0;
+    }
+
+    Serial.println(data);
+
+    time1 = 0;
+    time2 = 0;
+}
+
+void start()
+{
+    if (time1 == 0)
+    {
+        time1 = micros();
+    }
+}
+
+void finish()
+{
+    if (time2 == 0)
+    {
+        time2 = micros();
+    }
+}
